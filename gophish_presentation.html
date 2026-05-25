@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +7,6 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -45,7 +42,9 @@
         }
 
         /* Typography */
-        .reveal { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+        .reveal { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+        }
         
         .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
             color: var(--accent-color);
@@ -62,10 +61,7 @@
             display: inline-block;
         }
 
-        /* * FIX: Container Width and Centering *
-         * This wrapper ensures the content doesn't stretch too wide on desktops
-         * and prevents edges from touching the screen on mobile devices.
-         */
+        /* Container Width and Centering */
         .slide-wrapper {
             max-width: 900px;
             margin: 0 auto;
@@ -102,7 +98,10 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
         }
-        #theme-toggle:hover { background: var(--border-color); }
+        
+        #theme-toggle:hover { 
+            background: var(--border-color); 
+        }
 
         /* Custom Slide Elements */
         .soc-badge {
@@ -126,19 +125,25 @@
             margin: 15px 0;
             text-align: left;
             transition: background 0.3s ease, border-color 0.3s ease;
-            box-sizing: border-box; /* Prevents overflow */
+            box-sizing: border-box;
         }
 
-        /* * FIX: Bulletproof Responsive Grid *
-         * The min(100%, 260px) ensures that if a screen is smaller than 260px, 
-         * the card shrinks to fit the screen instead of overflowing.
-         */
+        .grid-card {
+            margin: 0;
+        }
+        
+        .grid-full-width {
+            margin: 0;
+            grid-column: 1 / -1;
+        }
+
+        /* Responsive Grid */
         .grid-2 {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(min(100%, 32%), 1fr));
-                gap: 20px;
-                width: 100%;
-                box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 32%), 1fr));
+            gap: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .icon-box {
@@ -148,13 +153,19 @@
             margin-bottom: 15px;
             text-align: left;
         }
-        .icon-box i { font-size: 1.8rem; color: var(--accent-color); margin-top: 5px; min-width: 30px; }
+        .icon-box i { 
+            font-size: 1.8rem; 
+            color: var(--accent-color); 
+            margin-top: 5px; 
+            min-width: 30px; 
+        }
         .icon-box h4 { margin: 0 0 5px 0; font-size: 1.1rem; }
         .icon-box p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
 
         .reveal ul { font-size: 1rem; line-height: 1.6; text-align: left; display: block; }
         .reveal li { margin-bottom: 15px; word-wrap: break-word; }
 
+        /* Diagram Elements */
         .diagram-container {
             display: flex;
             flex-direction: column;
@@ -165,10 +176,9 @@
             margin-top: -20px;
         }
 
-        /* The Nodes */
         .node {
             background: var(--card-bg);
-            border: 2px solid var(--line-color);
+            border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 15px 25px;
             width: 220px;
@@ -180,7 +190,7 @@
 
         .node i {
             font-size: 1.5rem;
-            color: var(--accent);
+            color: var(--accent-color);
             margin-bottom: 8px;
             margin-top: 8px;
             display: block;
@@ -189,18 +199,17 @@
         .node span {
             display: block;
             font-weight: bold;
-            color: var(--text);
+            color: var(--text-main);
             font-size: 0.9rem;
         }
 
         .node small {
-            color: var(--accent);
+            color: var(--accent-color);
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* The Connector Lines */
         .node:not(:last-child)::after {
             content: '';
             position: absolute;
@@ -208,25 +217,24 @@
             left: 50%;
             width: 2px;
             height: 40px;
-            background: var(--line-color);
+            background: var(--border-color);
             z-index: 1;
         }
 
-        /* The Arrowhead */
         .node:not(:last-child)::before {
             content: '▼';
             position: absolute;
             top: calc(100% + 25px);
             left: 50%;
             transform: translateX(-50%);
-            color: var(--line-color);
+            color: var(--border-color);
             font-size: 12px;
             z-index: 1;
         }
 
-        /* Mobile specific spacing */
+        /* Mobile Adjustments */
         @media (max-width: 768px) {
-            .slide-wrapper { padding: 80px 15px 20px 15px; } /* Extra top padding so theme button doesn't cover title */
+            .slide-wrapper { padding: 80px 15px 20px 15px; }
             .icon-box { flex-direction: column; align-items: flex-start; gap: 5px; }
             .icon-box i { margin-bottom: 5px; }
             .card { padding: 20px; }
@@ -245,10 +253,16 @@
 
             <section>
                 <div class="slide-wrapper2">
-                    <div class="soc-badge"><i class="fa-solid fa-shield-halved"></i> DLSL / DYSRUPIT: SOC LAB</div>
+                    <div class="soc-badge">
+                        <i class="fa-solid fa-shield-halved"></i> DLSL / DYSRUPIT: SOC LAB
+                    </div>
                     <h1>The Art of Deception</h1>
-                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 1.2rem;">Automated Phishing Simulations & SOC Telemetry Tracking</h3>
-                    <p style="font-size: 0.8rem; margin-top: 40px; color: var(--text-muted);">Use Arrow Keys or Swipe to Navigate</p>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 1.2rem;">
+                        Automated Phishing Simulations & SOC Telemetry Tracking
+                    </h3>
+                    <p style="font-size: 0.8rem; margin-top: 40px; color: var(--text-muted);">
+                        Use Arrow Keys or Swipe to Navigate
+                    </p>
                 </div>
             </section>
 
@@ -270,12 +284,14 @@
                 <div class="slide-wrapper">
                     <h2>Importance</h2>
                     <div class="card">
-                        <ul style="font-size: 1rem; line-height: 1.6; margin: 0; padding-left: 20px;">
-                            <li style="margin-bottom: 10px;"><strong>Validates Human Defenses:</strong> Transforms passive training into active, measurable behavior modification.</li>
-                            <li style="margin-bottom: 10px;"><strong>Identifies Vulnerable Areas:</strong> Pinpoints high-risk groups or departments needing targeted educational support.</li>
-                            <li style="margin-bottom: 10px;"><strong>Reduces Breach Risks:</strong> Lowers susceptibility to credential harvesting, malware, and financial scams.</li>
-                            <li style="margin-bottom: 10px;"><strong>Tests Incident Response:</strong> Evaluates user threat-reporting speeds to optimize internal SOC detection times.</li>
-                            <li style="margin-bottom: 0;"><strong>Ensures Compliance:</strong> Satisfies mandatory awareness training requirements for HIPAA, PCI-DSS, and ISO 27001.</li>
+                        <ul style="font-size: 0.95rem; line-height: 1.5; margin: 0; padding-left: 20px; color: var(--text-main);">
+                            <li style="margin-bottom: 8px;"><strong>Validates Human Defenses:</strong> Transforms passive training into active, measurable behavior modification.</li>
+                            <li style="margin-bottom: 8px;"><strong>Identifies Vulnerable Areas:</strong> Pinpoints high-risk groups or departments needing targeted educational support.</li>
+                            <li style="margin-bottom: 8px;"><strong>Reduces Breach Risks:</strong> Lowers susceptibility to credential harvesting, malware, and financial scams.</li>
+                            <li style="margin-bottom: 8px;"><strong>Tests Incident Response:</strong> Evaluates user threat-reporting speeds to optimize internal SOC detection times.</li>
+                            <li style="margin-bottom: 8px;"><strong>Ensures Compliance:</strong> Satisfies mandatory awareness training requirements for ISO 27001.</li>
+                            <li style="margin-bottom: 8px;"><strong>Aligns with NIST CSF:</strong> Specifically supports the <strong>PROTECT</strong> pillar by deploying proactive safeguards and training to limit potential attack impact.</li>
+                            <li style="margin-bottom: 0;"><strong>Optimized Resource Allocation:</strong> Enables the district to meet national security standards and protect sensitive student/staff data with zero licensing costs.</li>
                         </ul>
                     </div>
                 </div>
@@ -285,21 +301,27 @@
                 <div class="slide-wrapper">
                     <h2>Why Gophish?</h2>
                     <div class="grid-2">
-                        <div class="card" style="margin: 0;">
-                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-lock-open"></i> Auditability</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">Open-source code ensures no data leakage to third-party vendors.</p>
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-code-branch"></i> Free & Open Source</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">No hidden fees or paywalls. Fully auditable codebase (Latest CISA update: Dec 4, 2025).</p>
                         </div>
-                        <div class="card" style="margin: 0;">
-                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-gears"></i> API Integration</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">Full REST API support for SOC automation and SIEM alerting.</p>
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-rocket"></i> Simple Setup</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">No complex dependencies. Runs as a single binary with an instant web-based admin console.</p>
                         </div>
-                        <div class="card" style="margin: 0;">
-                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-gauge-high"></i> Resource Efficiency</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">Minimal CPU/RAM footprint, ideal for containerized SOC labs.</p>
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-users-gear"></i> Departmental Scaling</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Scale from 50 to 5,000 targets across Finance, HR, or IT without per-user licensing costs.</p>
                         </div>
-                        <div class="card" style="margin: 0;">
-                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-shield-virus"></i> Realism</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">Unrestricted control over email headers to bypass or test security filters.</p>
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-gears"></i> Simple API</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Allows external software systems to command Gophish automatically without manual intervention.</p>
+                        </div>
+                        <div class="card grid-full-width">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-star"></i> CISA Approved Standard</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">
+                                Gophish is utilized by the <strong>Cybersecurity and Infrastructure Security Agency (CISA)</strong> as an official national standard for security training. It provides enterprise-grade simulation capabilities without the burden of premium software fees.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -307,8 +329,125 @@
 
             <section>
                 <div class="slide-wrapper">
-                    <h2>Infrastracture Flow</h2>
+                    <h2>Tool Comparison</h2>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px;">
+                        Selecting the right framework requires balancing offensive capabilities with educational safety.
+                    </p>
+                    <div class="card" style="overflow-x: auto; padding: 15px 25px;">
+                        <table style="width: 100%; font-size: 0.75rem; border-collapse: collapse; text-align: left; line-height: 1.6;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid var(--accent-color); color: var(--accent-color);">
+                                    <th style="padding: 10px;">Feature</th>
+                                    <th>Gophish</th>
+                                    <th>Evilginx3</th>
+                                    <th>SET (Social-Engineer Toolkit)</th>
+                                </tr>
+                            </thead>
+                            <tbody style="color: var(--text-main);">
+                                <tr style="border-bottom: 1px solid var(--border-color);">
+                                    <td style="padding: 10px; font-weight: bold;">Use Case</td>
+                                    <td>Awareness Training</td>
+                                    <td>Red Teaming</td>
+                                    <td>Exploitation</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-color);">
+                                    <td style="padding: 10px; font-weight: bold;">Stealth</td>
+                                    <td>Low-Medium</td>
+                                    <td>Extremely High</td>
+                                    <td>Medium-High</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-color);">
+                                    <td style="padding: 10px; font-weight: bold;">Data Handling</td>
+                                    <td>Local SQLite (Safe)</td>
+                                    <td>Proxies Live Sessions</td>
+                                    <td>Captures Cleartext</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; font-weight: bold;">Management Fit</td>
+                                    <td style="color: #28a745; font-weight: bold;">Perfect (Analytics)</td>
+                                    <td>Poor (Offensive Weapon)</td>
+                                    <td>Poor (CLI-focused)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="slide-wrapper">
+                    <h2>Philosophy & Tracking</h2>
+                    <div class="grid-2">
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-eye"></i> Real-Time Telemetry</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">Granular tracking of the attack kill-chain:</p>
+                            <ul style="font-size: 0.8rem; margin-top: 5px; margin-bottom: 0; color: var(--text-muted);">
+                                <li><strong>Delivery:</strong> Email routed successfully.</li>
+                                <li><strong>Engagement:</strong> Open rates via tracking pixels.</li>
+                                <li><strong>Interaction:</strong> Link click events logged.</li>
+                                <li><strong>Compromise:</strong> Credential submission tracking.</li>
+                            </ul>
+                        </div>
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-handshake"></i> Business-Friendly</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                                Marketed explicitly as an "Open-Source Phishing Framework" designed to help organizations effortlessly measure employee vulnerability, rather than acting as a complex, aggressive hacker tool.
+                            </p>
+                        </div>
+                        <div class="card grid-full-width">
+                            <div class="icon-box">
+                                <i class="fa-solid fa-user-shield"></i>
+                                <div>
+                                    <h4>Non-Destructive Testing</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">
+                                        Unlike offensive Red Team tools that steal active session tokens or deploy actual malware, Gophish safely captures behavioral metrics. This ensures that organizational security training does not inadvertently create real security risks.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="slide-wrapper">
+                    <h2>Deployment Specs</h2>
+                    <div class="grid-2">
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-solid fa-microchip"></i> Hardware (100 - 5k Targets)</h4>
+                            <ul style="font-size: 0.85rem; margin: 0; padding-left: 20px; color: var(--text-muted); line-height: 1.6;">
+                                <li><strong>CPU:</strong> 1 vCPU (Highly efficient Go binary)</li>
+                                <li><strong>RAM:</strong> 1GB – 2GB</li>
+                                <li><strong>Storage:</strong> 10GB – 20GB (SQLite Database)</li>
+                                <li><strong>Network:</strong> Ports 80/443 (Web) & 3333 (Admin)</li>
+                            </ul>
+                        </div>
+                        <div class="card grid-card">
+                            <h4 style="font-size: 1rem;"><i class="fa-brands fa-linux"></i> Platform: Linux OS</h4>
+                            <p style="font-size: 0.85rem; margin: 0; color: var(--text-muted); line-height: 1.5;">
+                                While available for Windows/macOS, <strong>Linux</strong> is the industry standard for production due to background persistence (Systemd), robust network security (UFW), and minimal OS overhead.
+                            </p>
+                        </div>
+                        <div class="card grid-full-width">
+                            <div class="icon-box">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                                <div>
+                                    <h4>Cost-to-Value Ratio</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">
+                                        Because the Gophish engine has such a minimal resource footprint, the entire SOC simulation infrastructure can run on a budget-friendly VPS instance. This provides enterprise-grade analytics at a fraction of commercial scaling costs.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="slide-wrapper">
+                    <h2>Infrastructure Flow</h2>
                     <div class="diagram-container">
+                        
                         <div class="node">
                             <small>External Edge</small>
                             <i class="fa-brands fa-cloudflare"></i>
@@ -347,7 +486,7 @@
                 <div class="slide-wrapper">
                     <h2>Platform Architecture</h2>
                     <div class="grid-2" style="margin-top: 20px;">
-                        <div class="card" style="margin: 0;">
+                        <div class="card grid-card">
                             <div class="icon-box">
                                 <i class="fa-brands fa-docker"></i>
                                 <div>
@@ -356,7 +495,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card" style="margin: 0;">
+                        <div class="card grid-card">
                             <div class="icon-box">
                                 <i class="fa-solid fa-code"></i>
                                 <div>
@@ -365,7 +504,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card" style="margin: 0; grid-column: 1 / -1;">
+                        <div class="card grid-full-width">
                             <div class="icon-box">
                                 <i class="fa-solid fa-envelope-open"></i>
                                 <div>
@@ -374,7 +513,7 @@
                                 </div>
                             </div>
                         </div>
-                       <div class="card" style="margin: 0; grid-column: 1 / -1;">
+                       <div class="card grid-full-width">
                             <div class="icon-box">
                                 <i class="fa-solid fa-cloud"></i>
                                 <div>
@@ -392,24 +531,38 @@
                     <h2>Simulation Lifecycle</h2>
                     <div class="card">
                         <div class="icon-box">
-                            <i class="fa-solid fa-1"></i>
+                            <i class="fa-solid fa-magnifying-glass"></i>
                             <div>
-                                <h4>The Lure (Delivery)</h4>
-                                <p>Targeted email template is deployed to the user group.</p>
+                                <h4>1. Tool Research & Comparison</h4>
+                                <p>Evaluating industry-standard phishing frameworks to select a tool that balances automation with granular SOC telemetry tracking.</p>
                             </div>
                         </div>
                         <div class="icon-box">
-                            <i class="fa-solid fa-2"></i>
+                            <i class="fa-solid fa-bullseye"></i>
                             <div>
-                                <h4>The Hook (Engagement)</h4>
-                                <p>User clicks the link and accesses a simulated Landing Page.</p>
+                                <h4>2. Target & Strategy Definition</h4>
+                                <p>Identifying the target user group and selecting Gophish as the core engine for its high-fidelity simulation capabilities.</p>
                             </div>
                         </div>
                         <div class="icon-box">
-                            <i class="fa-solid fa-3"></i>
+                            <i class="fa-solid fa-server"></i>
                             <div>
-                                <h4>The Catch (Telemetry)</h4>
-                                <p>Data submission is captured, and the SOC dashboard updates in real-time.</p>
+                                <h4>3. Infrastructure Deployment</h4>
+                                <p>Provisioning Gophish on Linux (Ubuntu) integrated with Cloudflare for DNS management and origin IP masking.</p>
+                            </div>
+                        </div>
+                        <div class="icon-box">
+                            <i class="fa-solid fa-file-code"></i>
+                            <div>
+                                <h4>4. Asset Integration</h4>
+                                <p>Importing custom-coded email templates and landing pages tailored to organization-specific branding.</p>
+                            </div>
+                        </div>
+                        <div class="icon-box">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <div>
+                                <h4>5. Execution & Analysis</h4>
+                                <p>Launching the campaign to the SOC lab group to capture real-time metrics and evaluate user resilience.</p>
                             </div>
                         </div>
                     </div>
@@ -420,19 +573,19 @@
                 <div class="slide-wrapper">
                     <h2>Metrics Tracked</h2>
                     <div class="grid-2">
-                        <div class="card" style="margin: 0;">
+                        <div class="card grid-card">
                             <h4 style="font-size: 1rem; margin-bottom: 5px;"><i class="fa-solid fa-envelope"></i> Emails Sent & Opened</h4>
                             <p style="font-size: 0.85rem; margin:0; color: var(--text-muted);">Tracks delivery success and message preview rates.</p>
                         </div>
-                        <div class="card" style="margin: 0;">
+                        <div class="card grid-card">
                             <h4 style="font-size: 1rem; margin-bottom: 5px;"><i class="fa-solid fa-hand-pointer"></i> Links Clicked</h4>
                             <p style="font-size: 0.85rem; margin:0; color: var(--text-muted);">Logs user interaction with embedded tracking URLs.</p>
                         </div>
-                        <div class="card" style="margin: 0;">
+                        <div class="card grid-card">
                             <h4 style="font-size: 1rem; margin-bottom: 5px;"><i class="fa-solid fa-key"></i> Submitted Data</h4>
                             <p style="font-size: 0.85rem; margin:0; color: var(--text-muted);">Identifies credential harvesting and form completions.</p>
                         </div>
-                        <div class="card" style="margin: 0;">
+                        <div class="card grid-card">
                             <h4 style="font-size: 1rem; margin-bottom: 5px;"><i class="fa-solid fa-flag"></i> Emails Reported</h4>
                             <p style="font-size: 0.85rem; margin:0; color: var(--text-muted);">Measures active user reporting via IMAP integration.</p>
                         </div>
@@ -447,7 +600,6 @@
                         <ul>
                             <li><strong>Baseline Assessment:</strong> Execute an initial campaign to establish the current organizational risk percentage.</li>
                             <li><strong>Targeted Education:</strong> Route compromised users immediately to DLSL micro-training modules.</li>
-                            <li><strong>SIEM Integration:</strong> Correlate human risk data with our primary security dashboards via API Webhooks.</li>
                         </ul>
                     </div>
                     <h3 style="margin-top: 40px; text-align: center; font-size: 1.8rem;">Thank You</h3>
