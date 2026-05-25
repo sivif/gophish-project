@@ -155,12 +155,82 @@
         .reveal ul { font-size: 1rem; line-height: 1.6; text-align: left; display: block; }
         .reveal li { margin-bottom: 15px; word-wrap: break-word; }
 
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 40px 20px;
+            font-family: sans-serif;
+            margin-top: -20px;
+        }
+
+        /* The Nodes */
+        .node {
+            background: var(--card-bg);
+            border: 2px solid var(--line-color);
+            border-radius: 12px;
+            padding: 15px 25px;
+            width: 220px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            z-index: 2;
+        }
+
+        .node i {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .node span {
+            display: block;
+            font-weight: bold;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .node small {
+            color: var(--accent);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* The Connector Lines */
+        .node:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: var(--line-color);
+            z-index: 1;
+        }
+
+        /* The Arrowhead */
+        .node:not(:last-child)::before {
+            content: '▼';
+            position: absolute;
+            top: calc(100% + 25px);
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--line-color);
+            font-size: 12px;
+            z-index: 1;
+        }
+
         /* Mobile specific spacing */
         @media (max-width: 768px) {
             .slide-wrapper { padding: 80px 15px 20px 15px; } /* Extra top padding so theme button doesn't cover title */
             .icon-box { flex-direction: column; align-items: flex-start; gap: 5px; }
             .icon-box i { margin-bottom: 5px; }
             .card { padding: 20px; }
+            .node { width: 180px; padding: 10px; }
         }
     </style>
 </head>
@@ -235,6 +305,43 @@
                 </div>
             </section>
 
+            <section>
+                <div class="slide-wrapper">
+                    <h2>Infrastracture Flow</h2>
+                    <div class="diagram-container">
+                        <div class="node">
+                            <small>External Edge</small>
+                            <i class="fa-brands fa-cloudflare"></i>
+                            <span>Cloudflare</span>
+                        </div>
+
+                        <div class="node">
+                            <small>Infrastructure</small>
+                            <i class="fa-solid fa-server"></i>
+                            <span>Hostinger (VPS)</span>
+                        </div>
+
+                        <div class="node">
+                            <small>Environment</small>
+                            <i class="fa-brands fa-linux"></i>
+                            <span>Linux OS</span>
+                        </div>
+
+                        <div class="node">
+                            <small>Virtualization</small>
+                            <i class="fa-brands fa-docker"></i>
+                            <span>Docker Engine</span>
+                        </div>
+
+                        <div class="node">
+                            <small>Application</small>
+                            <i class="fa-solid fa-fish-arrow-item"></i>
+                            <span>Gophish Instance</span>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
 
             <section>
                 <div class="slide-wrapper">
