@@ -5,50 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DLSL SOC Lab - Report Generator</title>
     <style>
-        /* --- STYLES FOR THE GENERATOR TOOL UI --- */
+        /* Generator UI Styles */
         body { font-family: system-ui, -apple-system, sans-serif; background: #f4f7f9; color: #333; margin: 0; padding: 40px; }
         .container { max-width: 1000px; margin: 0 auto; }
         .header-title { font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #0d2137; }
-        
-        #drop-zone {
-            border: 2px dashed #4a7090; border-radius: 8px; background: #ffffff;
-            padding: 60px 20px; text-align: center; color: #4a7090; font-size: 18px;
-            transition: all 0.2s ease; cursor: pointer; margin-bottom: 20px;
+        #drop-zone { 
+            border: 2px dashed #4a7090; border-radius: 8px; background: #ffffff; 
+            padding: 60px 20px; text-align: center; color: #4a7090; font-size: 18px; 
+            transition: all 0.2s ease; cursor: pointer; margin-bottom: 20px; 
         }
         #drop-zone.dragover { background: #e8f4fd; border-color: #1565c0; color: #1565c0; }
-        
         .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
-        button {
-            background: #1565c0; color: white; border: none; padding: 12px 24px;
-            border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: background 0.2s ease; display: none;
+        button { 
+            background: #1565c0; color: white; border: none; padding: 12px 24px; 
+            border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; 
+            transition: background 0.2s ease; display: none; 
         }
         button:hover { background: #0d47a1; }
-        
-        #preview-container {
-            border: 1px solid #ddd; border-radius: 8px; background: #fff;
-            padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: none;
-        }
-        iframe { width: 100%; height: 600px; border: none; }
+        #preview-container { border: 1px solid #ddd; border-radius: 8px; background: #fff; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: none; }
+        iframe { width: 100%; height: 650px; border: none; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="header-title">🛡️ SOC Lab V2 HTML Report Generator</div>
-    
     <div id="drop-zone">
         Drag & Drop your Campaign CSV here<br>
         <span style="font-size: 14px; opacity: 0.7;">or click to select file</span>
         <input type="file" id="file-input" accept=".csv" style="display: none;">
     </div>
-
     <div class="controls">
         <div id="status-text" style="color: #666; font-weight: bold;"></div>
         <button id="download-btn">⬇️ Download HTML Report</button>
     </div>
-
     <div id="preview-container">
         <h3 style="margin-top:0; color: #555; font-size: 14px; text-transform: uppercase;">Live Preview</h3>
         <iframe id="preview-frame"></iframe>
@@ -56,17 +45,15 @@
 </div>
 
 <script>
-    // --- APP LOGIC ---
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
     const downloadBtn = document.getElementById('download-btn');
     const previewContainer = document.getElementById('preview-container');
     const previewFrame = document.getElementById('preview-frame');
     const statusText = document.getElementById('status-text');
-
     let generatedHTML = '';
 
-    // Drag and Drop Events
+    // File Handling Logic
     dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
     dropZone.addEventListener('drop', (e) => {
@@ -75,227 +62,147 @@
         if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
     });
     dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) handleFile(e.target.files[0]);
-    });
+    fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
 
     function handleFile(file) {
-        if (!file.name.endsWith('.csv')) {
-            alert('Please drop a valid CSV file.'); return;
-        }
+        if (!file.name.endsWith('.csv')) { alert('Please drop a valid CSV file.'); return; }
         statusText.textContent = `Processing: ${file.name}...`;
-        
         const reader = new FileReader();
         reader.onload = (e) => processCSV(e.target.result);
         reader.readAsText(file);
     }
 
     function processCSV(csvText) {
-        // Basic CSV Parser
         const lines = csvText.split('\n').filter(line => line.trim() !== '');
         if (lines.length < 2) { alert('CSV appears to be empty or invalid.'); return; }
-        
         const headers = lines[0].split(',').map(h => h.trim());
         const data = [];
-        
         for (let i = 1; i < lines.length; i++) {
             const values = lines[i].split(',');
             const row = {};
-            headers.forEach((header, index) => {
-                row[header] = values[index] ? values[index].trim() : '';
-            });
+            headers.forEach((header, index) => { row[header] = values[index] ? values[index].trim() : ''; });
             data.push(row);
         }
-
         generateReport(data);
     }
 
+    /**
+     * INFERENCE LOGIC: Generates the "Short Essay" without an LLM
+     */
+    function getInferredAnalysis(total, opened, clicked, submitted) {
+        let subRate = total > 0 ? (submitted / total) * 100 : 0;
+        let clickRate = total > 0 ? (clicked / total) * 100 : 0;
+        let openRate = total > 0 ? (opened / total) * 100 : 0;
+        
+        let risk = "LOW";
+        let essay = "";
+
+        if (subRate > 15) {
+            risk = "CRITICAL";
+            essay = "The assessment reveals a severe security gap. A significant portion of the target group not only interacted with the lure but proceeded to submit credentials. This suggests that the technical 'look and feel' of the phishing page successfully bypassed the users' critical judgment, posing a high risk of immediate account takeover in a real-world attack.";
+        } else if (clickRate > 25 && subRate < 5) {
+            risk = "MODERATE";
+            essay = "Data shows a high initial engagement rate, but a low final conversion rate. This indicates that while the email subject line was highly effective at inducing curiosity, the secondary security cues on the landing page successfully deterred users from providing sensitive information. Further training should focus on identifying suspicious links before the click occurs.";
+        } else if (openRate > 40 && clickRate < 10) {
+            risk = "LOW";
+            essay = "The campaign achieved high visibility, yet very low interaction. This is a positive indicator of 'active vigilance'; users are reading the communications but correctly identifying the internal content as suspicious. The workforce demonstrates a strong habit of 'looking but not touching' when faced with unexpected external links.";
+        } else if (subRate > 5 || clickRate > 15) {
+            risk = "MODERATE";
+            essay = "The organization shows a moderate susceptibility to social engineering. While not a total failure in defense, the steady trickle of clicks and submissions suggests that a motivated attacker could eventually find a foothold. Standard periodic awareness refreshers are recommended.";
+        } else {
+            risk = "LOW";
+            essay = "The results indicate a stable security posture. Interacting with the phishing test remained within safe margins. No immediate emergency intervention is required, though continuous monitoring is advised to ensure the baseline does not degrade over time.";
+        }
+
+        // Add nuanced behavioral observations
+        if (submitted > 0 && submitted === clicked) {
+            essay += " Notably, every user who clicked the link also submitted data, indicating a 100% loss of caution once the landing page was reached.";
+        }
+        
+        return { risk, essay };
+    }
+
     function generateReport(data) {
-        // Calculate Stats
         const totalSent = data.length;
         const opened = data.filter(d => d.status === 'Email Opened').length;
         const clicked = data.filter(d => d.status === 'Clicked Link').length;
         const submitted = data.filter(d => d.status === 'Submitted Data').length;
-
-        // Current Date/Time for Header (Approximating GMT+8 formatting)
+        
+        const analysis = getInferredAnalysis(totalSent, opened, clicked, submitted);
+        
         const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
-        const timeStr = now.toTimeString().split(' ')[0];
-        const timestamp = `${dateStr} ${timeStr} GMT+8`;
-
-        // Generate Table Rows
+        const timestamp = `${now.toISOString().split('T')[0]} ${now.toTimeString().split(' ')[0]} GMT+8`;
+        
         let tableRowsHTML = '';
         data.forEach((row, index) => {
-            const bgClass = index % 2 === 0 ? '#ffffff' : '#f8fafc';
-            
-            // Map severity based on status
-            let sevBg, sevFg, sevIcon, sevText;
-            if (row.status === 'Submitted Data') {
-                sevBg = '#fde8e8'; sevFg = '#922b21'; sevIcon = '🔴'; sevText = 'SUBMITTED DATA';
-            } else if (row.status === 'Clicked Link') {
-                sevBg = '#fef0e6'; sevFg = '#a04000'; sevIcon = '🟠'; sevText = 'CLICKED LINK';
-            } else if (row.status === 'Email Opened') {
-                sevBg = '#fefce8'; sevFg = '#856404'; sevIcon = '🟡'; sevText = 'EMAIL OPENED';
-            } else {
-                sevBg = '#f8f9fa'; sevFg = '#495057'; sevIcon = '⚪'; sevText = (row.status || 'UNKNOWN').toUpperCase();
-            }
-
-            // Format date string safely
-            const lastActive = row.modified_date ? row.modified_date.replace('T', ' ').substring(0, 19) : 'N/A';
+            const bg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
+            let sev = { bg: '#f8f9fa', fg: '#495057', icon: '⚪', text: (row.status || 'UNKNOWN').toUpperCase() };
+            if (row.status === 'Submitted Data') sev = { bg: '#fde8e8', fg: '#922b21', icon: '🔴', text: 'SUBMITTED DATA' };
+            else if (row.status === 'Clicked Link') sev = { bg: '#fef0e6', fg: '#a04000', icon: '🟠', text: 'CLICKED LINK' };
+            else if (row.status === 'Email Opened') sev = { bg: '#fefce8', fg: '#856404', icon: '🟡', text: 'EMAIL OPENED' };
 
             tableRowsHTML += `
-                <tr style="background:${bgClass}; border-bottom:1px solid #f0f0f0;">
-                  <td style="padding:10px 12px; font-size:12px; color:#333333;">${row.email}</td>
-                  <td style="padding:10px 12px; font-size:11px; font-family:monospace; color:#555555;">${row.ip || 'N/A'}</td>
+                <tr style="background:${bg}; border-bottom:1px solid #f0f0f0;">
+                  <td style="padding:10px 12px; font-size:12px; color:#333;">${row.email}</td>
+                  <td style="padding:10px 12px; font-size:11px; font-family:monospace; color:#555;">${row.ip || 'N/A'}</td>
                   <td style="padding:10px 12px;">
-                    <span style="background:${sevBg}; color:${sevFg}; font-weight:bold; padding:2px 8px; border-radius:10px; font-size:11px; white-space:nowrap;">
-                      ${sevIcon} ${sevText}
+                    <span style="background:${sev.bg}; color:${sev.fg}; font-weight:bold; padding:2px 8px; border-radius:10px; font-size:11px;">
+                      ${sev.icon} ${sev.text}
                     </span>
                   </td>
-                  <td style="padding:10px 12px; font-size:12px; color:#555555; text-align:right;">${lastActive}</td>
+                  <td style="padding:10px 12px; font-size:12px; color:#555; text-align:right;">${row.modified_date ? row.modified_date.replace('T', ' ').substring(0, 16) : 'N/A'}</td>
                 </tr>`;
         });
 
-        // Assemble Final HTML String (V2 Standard)
+        // The Full Report Template Literal
         generatedHTML = `<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>DLSL Email Test TOIC - Results</title>
-</head>
-<body style="background-color:#f0f4f8; font-family:Arial, Helvetica, sans-serif; font-size:13px; margin:0; padding:0;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:20px 10px;">
+<head><meta charset="utf-8"><title>DLSL SOC Report</title></head>
+<body style="background-color:#f0f4f8; font-family:Arial, sans-serif; margin:0; padding:20px;">
+  <table width="920" align="center" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.12);">
     <tr>
-      <td align="center">
-        <table width="920" cellpadding="0" cellspacing="0" style="max-width:920px; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.12); text-align:left;">
-          <tr>
-            <td style="background:#0d2137; padding:0;">
-              <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="padding:24px 28px;">
-                    <div style="color:#7fb3d3; font-size:10px; letter-spacing:2px; font-weight:bold; text-transform:uppercase; margin-bottom:4px;">
-                      De La Salle Lipa / DysrupIT: SOC Lab
-                    </div>
-                    <div style="color:#ffffff; font-size:20px; font-weight:bold; letter-spacing:0.5px;">
-                      🎣 DLSL — Phishing Campaign Assessment
-                    </div>
-                    <div style="color:#a8c8e8; font-size:12px; margin-top:6px;">
-                      Batch Campaign Report &nbsp;·&nbsp; ${dateStr} &nbsp;·&nbsp; ${totalSent} target(s)
-                    </div>
-                    <div style="color:#7fb3d3; font-size:10px; margin-top:4px;">
-                      Generated: ${timestamp}
-                    </div>
-                    <div style="margin-top:10px;">
-                      <span style="background:rgba(255,255,255,0.15); color:#a8c8e8; font-size:10px; padding:3px 10px; border-radius:3px; letter-spacing:1px;">
-                        INTERNAL USE ONLY
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="background:#ffffff; padding:16px 20px;">
-              <table cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td style="padding:8px;" align="center">
-                    <div style="background:#f8f9fa; border-radius:8px; padding:14px 18px; text-align:center; min-width:80px;">
-                      <div style="color:#495057; font-size:28px; font-weight:bold; line-height:1;">${totalSent}</div>
-                      <div style="color:#495057; font-size:10px; margin-top:4px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase;">TOTAL SENT</div>
-                    </div>
-                  </td>
-                  <td style="padding:8px;" align="center">
-                    <div style="background:#fefce8; border-radius:8px; padding:14px 18px; text-align:center; min-width:80px;">
-                      <div style="color:#856404; font-size:28px; font-weight:bold; line-height:1;">${opened}</div>
-                      <div style="color:#856404; font-size:10px; margin-top:4px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase;">OPENED ONLY</div>
-                    </div>
-                  </td>
-                  <td style="padding:8px;" align="center">
-                    <div style="background:#fef0e6; border-radius:8px; padding:14px 18px; text-align:center; min-width:80px;">
-                      <div style="color:#a04000; font-size:28px; font-weight:bold; line-height:1;">${clicked}</div>
-                      <div style="color:#a04000; font-size:10px; margin-top:4px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase;">CLICKED LINK</div>
-                    </div>
-                  </td>
-                  <td style="padding:8px;" align="center">
-                    <div style="background:#fde8e8; border-radius:8px; padding:14px 18px; text-align:center; min-width:80px;">
-                      <div style="color:#922b21; font-size:28px; font-weight:bold; line-height:1;">${submitted}</div>
-                      <div style="color:#922b21; font-size:10px; margin-top:4px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase;">SUBMITTED DATA</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 28px 16px 28px;">
-              <div style="background:#fff8e1; border-left:4px solid #f9a825; border-radius:4px; padding:12px 16px;">
-                <div style="color:#7a5000; font-size:12px; font-weight:bold; margin-bottom:6px;">⚠ Campaign Context</div>
-                <div style="color:#7a5000; font-size:11px; line-height:1.7;">
-                  This report summarizes the results of the <b>DLSL Email Test TOIC</b>. Target behavior is tracked to assess internal security awareness. <i>Submitted Data</i> indicates a critical compromise, <i>Clicked Link</i> indicates a high risk, and <i>Email Opened</i> acts as a medium indicator of interaction.
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td style="background:#1e3a5f; color:#ecf0f1; font-weight:bold; font-size:12px; padding:9px 16px; letter-spacing:1px; text-transform:uppercase;">
-              🔍 TARGET ACTIVITY DETAILS
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0;">
-              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                <tr>
-                  <th style="background:#2c3e50; color:#ecf0f1; padding:8px 12px; text-align:left; font-size:11px; font-weight:bold; letter-spacing:0.4px; white-space:nowrap;">Target Email</th>
-                  <th style="background:#2c3e50; color:#ecf0f1; padding:8px 12px; text-align:left; font-size:11px; font-weight:bold; letter-spacing:0.4px; white-space:nowrap;">IP Address</th>
-                  <th style="background:#2c3e50; color:#ecf0f1; padding:8px 12px; text-align:left; font-size:11px; font-weight:bold; letter-spacing:0.4px; white-space:nowrap;">Status / Severity</th>
-                  <th style="background:#2c3e50; color:#ecf0f1; padding:8px 12px; text-align:right; font-size:11px; font-weight:bold; letter-spacing:0.4px; white-space:nowrap;">Last Activity (UTC)</th>
-                </tr>
-                ${tableRowsHTML}
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="background:#0d2137; padding:20px 28px; text-align:center;">
-              <div style="color:#7fb3d3; font-size:11px;">De La Salle Lipa / DysrupIT: SOC Lab</div>
-              <div style="color:#4a7090; font-size:10px; margin-top:4px;">Phishing Assessment Analyzer v2 &nbsp;·&nbsp; ${timestamp}</div>
-              <div style="color:#4a7090; font-size:10px; margin-top:2px;">CONFIDENTIAL — FOR INTERNAL USE ONLY</div>
-            </td>
-          </tr>
-        </table>
+      <td style="background:#0d2137; padding:24px 28px;">
+        <div style="color:#7fb3d3; font-size:10px; font-weight:bold; text-transform:uppercase;">De La Salle Lipa / DysrupIT: SOC Lab</div>
+        <div style="color:#ffffff; font-size:20px; font-weight:bold;">🎣 Phishing Campaign Assessment</div>
+        <div style="color:#a8c8e8; font-size:12px; margin-top:4px;">Generated: ${timestamp}</div>
       </td>
     </tr>
+    <tr>
+        <td style="padding:20px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td width="25%"><div style="background:#f8f9fa; padding:15px; text-align:center; border-radius:8px;"><div style="font-size:24px; font-weight:bold;">${totalSent}</div><div style="font-size:10px; color:#666;">SENT</div></div></td>
+                    <td width="25%"><div style="background:#fefce8; padding:15px; text-align:center; border-radius:8px;"><div style="font-size:24px; font-weight:bold;">${opened}</div><div style="font-size:10px; color:#666;">OPENED</div></div></td>
+                    <td width="25%"><div style="background:#fef0e6; padding:15px; text-align:center; border-radius:8px;"><div style="font-size:24px; font-weight:bold;">${clicked}</div><div style="font-size:10px; color:#666;">CLICKED</div></div></td>
+                    <td width="25%"><div style="background:#fde8e8; padding:15px; text-align:center; border-radius:8px;"><div style="font-size:24px; font-weight:bold;">${submitted}</div><div style="font-size:10px; color:#666;">SUBMITTED</div></div></td>
+                </tr>
+            </table>
+            
+            <div style="margin-top:20px; background:#f1f5f9; border-left:4px solid #1e3a5f; padding:16px; border-radius:4px;">
+                <div style="font-weight:bold; font-size:12px; color:#1e3a5f; margin-bottom:8px;">EXECUTIVE SUMMARY — RISK LEVEL: ${analysis.risk}</div>
+                <div style="font-size:12px; line-height:1.6; color:#334155; font-style:italic;">"${analysis.essay}"</div>
+            </div>
+        </td>
+    </tr>
+    <tr><td style="background:#1e3a5f; color:#fff; padding:10px 16px; font-size:11px; font-weight:bold;">🔍 TARGET ACTIVITY LOGS</td></tr>
+    <tr><td><table width="100%" cellpadding="10" cellspacing="0" style="font-size:12px; border-collapse:collapse;">${tableRowsHTML}</table></td></tr>
   </table>
 </body>
 </html>`;
 
-        // Update UI
-        statusText.textContent = `Report generated successfully! (${totalSent} records processed)`;
+        statusText.textContent = `Success: Analyzed ${totalSent} records.`;
         previewContainer.style.display = 'block';
         downloadBtn.style.display = 'block';
-        
-        // Render preview inside iframe securely
         previewFrame.srcdoc = generatedHTML;
     }
 
-    // Download functionality
     downloadBtn.addEventListener('click', () => {
-        if (!generatedHTML) return;
         const blob = new Blob([generatedHTML], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        
-        // Generate a clean filename based on today's date
-        const dateStr = new Date().toISOString().split('T')[0];
-        a.href = url;
-        a.download = `phishing_report_${dateStr}.html`;
-        
-        document.body.appendChild(a);
+        a.href = URL.createObjectURL(blob);
+        a.download = `soc_phishing_report_${new Date().toISOString().split('T')[0]}.html`;
         a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     });
 </script>
-
 </body>
 </html>
